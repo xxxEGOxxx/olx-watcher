@@ -25,13 +25,13 @@ releases. Do not delete it: it is the "already sent" memory; losing it re-warms 
 
 1. Create a bot with @BotFather, get your chat id (e.g. @userinfobot), fill `.env` from
    `.env.example`. On the server: `SOURCES=olx`, `SEARCH_URLS` (OLX searches; otodom ones are
-   ignored there), `SKIP_OTODOM_COPIES=1` once the home otodom runner is installed.
+   ignored there), `SKIP_OTODOM_COPIES=1` (otodom comes from GitHub Actions).
 2. `npm run server -- env-push`
 3. Commit, push `main`, then `npm run deploy:production`.
 4. `npm run server -- logs` — expect `started`, then `search warmed` on the first poll and
    `search polled` afterwards.
-5. otodom (optional): `cp .env.example .env.home`, set `SOURCES=otodom`, then
-   `npm run home -- install` on the Mac.
+5. otodom: set the repository secrets `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `SEARCH_URLS`
+   (`gh secret set …`), then `gh workflow run otodom` and check `gh run list -w otodom`.
 
 ## Ordinary release
 
@@ -63,7 +63,7 @@ and re-point `current`.
 
 OLX answers this VPS to a stock headless Chromium (the image ships Playwright's headless shell;
 measured 52 ads in 7 s, ~380 MB peak, inside the hardened container). otodom refuses every request
-from this IP, browser or not, so otodom is polled by the home runner (`ops/home.sh`). A
+from this IP, browser or not, so otodom is polled by GitHub Actions (`.github/workflows/otodom.yml`). A
 `search failed … answered 403` line from OLX means its rules changed: report it, do not disguise
 the browser (`docs/access.md`).
 

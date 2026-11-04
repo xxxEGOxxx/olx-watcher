@@ -7,8 +7,8 @@ Telegram с раскладкой: аренда, czynsz administracyjny, media, k
 Где что работает (подробно: [docs/access.md](docs/access.md)):
 
 - **OLX** опрашивается на сервере (VPS Flotana) через обычный headless Chromium (Playwright).
-- **otodom** блокирует IP дата-центров, включая наш сервер, поэтому его опрашивает домашний
-  раннер на Маке (launchd). Он работает, пока Мак не спит.
+- **otodom** блокирует IP нашего сервера (Hetzner), поэтому его опрашивает GitHub Actions по
+  расписанию раз в 15 минут.
 
 ## Локально
 
@@ -34,15 +34,19 @@ npm run deploy:production    # релиз запушенного main
 npm run server -- logs
 ```
 
-## Дом (otodom)
+## GitHub Actions (otodom)
+
+Workflow `.github/workflows/otodom.yml`. Секреты репозитория (значения не печатаются):
 
 ```bash
-cp .env.example .env.home    # SOURCES=otodom, тот же бот и чат
-npm run home -- install      # launchd-агент на Маке
-npm run home -- logs
+gh secret set TELEGRAM_BOT_TOKEN
+gh secret set TELEGRAM_CHAT_ID
+gh secret set SEARCH_URLS      # те же ссылки через |, нужны только otodom
+gh workflow run otodom         # первый запуск вручную: «прогрев», без сообщений
+gh run list -w otodom
 ```
 
-Когда домашний раннер работает, на сервере поставь `SKIP_OTODOM_COPIES=1`. Иначе квартиры с
-otodom, продублированные на OLX, придут дважды.
+Что уже отправлено, хранится в кэше Actions. Если кэш пропадёт, следующий проход будет тихим
+«прогревом»: без дублей, но объявления за этот промежуток пропустятся.
 
 Подробно: [docs/deploy.md](docs/deploy.md). Правила для агентов: [AGENTS.md](AGENTS.md).

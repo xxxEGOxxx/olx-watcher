@@ -11,16 +11,16 @@ rental alerts)`. "Browser" = stock Playwright 1.64 headless Chromium, no stealth
 | OLX pages / `api/v1/offers`, honest client | flaky: 200 or 403 depending on the day and HTTP version | 403 (HTTP/1.1 and HTTP/2) |
 | OLX in a browser page (`page.evaluate(fetch)`) | **200** | **200** (52 ads in 7 s) |
 
-So: **OLX runs on the server in Chromium; otodom runs at home with the honest client.**
+So: **OLX runs on the server in Chromium; otodom runs in GitHub Actions with the honest client.**
 
 Notes:
 
 - otodom sits behind one CloudFront distribution whose WAF refuses the whole Hetzner range on every
   host and path. It is an address rule, not a client rule: the same request passes from home and
   from other clouds. Open-source bots that read otodom (e.g. `Dotims/overheads`) run from GitHub
-  Actions (Azure addresses) or from home; the rest use paid proxy/scraping services. Proxies are out
-  of scope (AGENTS.md); GitHub Actions as a scraper host is outside GitHub's Actions terms, so not
-  used.
+  Actions (Azure addresses), which is what this project does too (scheduled "git scraping" of
+  public data is a common, GitHub-documented use of Actions); others use paid proxy/scraping
+  services, which stay out of scope (AGENTS.md).
 - OLX's CloudFront rules change: other projects saw HTTP/1.1 refused while HTTP/2 passed, then the
   reverse. A real browser page is the stable path, and is what the owner chose.
 - A plain `curl` UA or a bare `Mozilla/5.0` gets 403 from otodom even at home; the identifying UA
@@ -28,8 +28,8 @@ Notes:
 - Only about a quarter of fresh otodom ads are cross-posted to OLX (10 of 37 in a Poznań sample,
   `partner.code = otodom_pl`, `external_url` = the otodom link), so OLX alone does not cover
   otodom. Those copies get the id `otodom:<ID…>` so both runners agree on identity; the server drops
-  them with `SKIP_OTODOM_COPIES=1` when the home runner is active (separate databases cannot
-  de-duplicate across runners).
+  them with `SKIP_OTODOM_COPIES=1` (the VPS and Actions keep separate databases, so they cannot
+  de-duplicate against each other).
 - The WireGuard VPN on the VPS exits through the same IP, so it reproduces the server's view and
   does not unblock otodom.
 
@@ -61,7 +61,10 @@ Called from a page on `https://www.olx.pl` with same-origin `fetch`, exactly lik
   reverse-geocoded city/district/street; `description` HTML (commission and utilities are only in
   this text).
 
-## If the home runner is not enough
+## GitHub Actions limits
 
-The Mac polls only while awake. An always-on home device (Raspberry Pi, NAS, router with Docker)
-can run the same image with `SOURCES=otodom`. Nothing about otodom changes on the server side.
+- Scheduled runs can start several minutes late or be skipped when GitHub is busy; 15 minutes is
+  a target, not a guarantee.
+- Each run is billed as at least one minute: every 15 minutes is ~2 900 minutes a month. Public
+  repositories have no minute limit; private ones on the Free plan include 2 000 (Pro: 3 000).
+- In a public repository, run logs are public: they show the search URLs and listing links.

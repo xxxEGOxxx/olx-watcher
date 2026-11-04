@@ -27,23 +27,30 @@ export type Deps = {
  * One pass over the searches this runner owns. Each source is opened once per pass (a browser
  * lives only while polling) and closed afterwards. The first pass of a search only records ids
  * (no message flood). A listing is marked seen only after it was sent, so failures retry.
+ * Returns how many searches failed, so a one-shot run (GitHub Actions) can fail loudly.
  */
-export async function pollOnce(searchUrls: string[], deps: Deps): Promise<void> {
+export async function pollOnce(searchUrls: string[], deps: Deps): Promise<number> {
+  let failed = 0;
   for (const source of deps.sources) {
     const searches = searchUrls.filter((url) => source.handles(url));
     if (searches.length === 0) continue;
     try {
       await source.open?.();
-      for (const search of searches) await pollSearch(source, search, deps);
+      for (const search of searches) {
+        if (!(await pollSearch(source, search, deps))) failed += 1;
+      }
     } catch (error) {
+      failed += searches.length;
       log("source failed", { source: source.kind, error: errorMessage(error) });
     } finally {
       await source.close?.();
     }
   }
+  return failed;
 }
 
-async function pollSearch(source: ListingSource, search: string, deps: Deps): Promise<void> {
+/** false when the search itself could not be read (blocked, layout change, network). */
+async function pollSearch(source: ListingSource, search: string, deps: Deps): Promise<boolean> {
   const delay = deps.delay ?? sleep;
   try {
     const warm = deps.store.isWarm(search);
@@ -54,7 +61,7 @@ async function pollSearch(source: ListingSource, search: string, deps: Deps): Pr
       for (const ref of fresh) deps.store.markSeen(ref.id, search, false);
       deps.store.markWarm(search);
       log("search warmed", { search, total: refs.length });
-      return;
+      return true;
     }
 
     // Oldest first so the chat reads chronologically.
@@ -77,8 +84,10 @@ async function pollSearch(source: ListingSource, search: string, deps: Deps): Pr
       }
     }
     log("search polled", { search, total: refs.length, fresh: fresh.length, sent });
+    return true;
   } catch (error) {
     log("search failed", { search, error: errorMessage(error) });
+    return false;
   }
 }
 
@@ -103,8 +112,9 @@ async function main(): Promise<void> {
   );
   log("started", { sources: config.sources, searches: owned.length, once });
 
+  let failed = 0;
   while (!stop.signal.aborted) {
-    await pollOnce(owned, deps);
+    failed = await pollOnce(owned, deps);
     writeHeartbeat(config.dataDir);
     if (once) break;
     // ±20% jitter so requests do not land on a fixed schedule.
@@ -113,7 +123,8 @@ async function main(): Promise<void> {
   }
 
   deps.store.close();
-  log("stopped");
+  log("stopped", { failedSearches: failed });
+  if (once && failed > 0) process.exitCode = 1;
 }
 
 if (import.meta.main) {

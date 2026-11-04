@@ -1,0 +1,47 @@
+# otodom refuses the flotana VPS (Hetzner range), so otodom is polled here; the VPS polls OLX.
+# One short job per run: restore the "already sent" SQLite from the cache, poll once, save it.
+# No npm install: the otodom path has no runtime dependencies.
+name: otodom
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: otodom
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      DATA_DIR: state
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+      # Cache keys are immutable: save under this run's id, restore the newest by prefix.
+      # A lost cache only costs one silent warm-up pass (no duplicates, no flood).
+      - uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: otodom-state-${{ github.run_id }}
+          restore-keys: otodom-state-
+      - name: Poll otodom once
+        run: node src/index.ts --once
+        env:
+          SOURCES: otodom
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          SEARCH_URLS: ${{ secrets.SEARCH_URLS }}
+      - uses: actions/cache/save@v4
+        if: always() && hashFiles('state/**') != ''
+        with:
+          path: state
+          key: otodom-state-${{ github.run_id }}

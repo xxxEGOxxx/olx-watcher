@@ -78,11 +78,24 @@ describe("pollOnce", () => {
     await pollOnce([SEARCH], h.deps);
     h.setRefs(["x"]);
     h.failing.add("x");
-    await pollOnce([SEARCH], h.deps);
+    assert.equal(await pollOnce([SEARCH], h.deps), 0, "a failed listing is not a failed search");
     assert.equal(h.sent.length, 0);
     h.failing.clear();
     await pollOnce([SEARCH], h.deps);
     assert.equal(h.sent.length, 1);
+  });
+
+  it("counts searches that could not be read", async () => {
+    const h = harness();
+    const blocked: ListingSource = {
+      kind: "blocked",
+      handles: () => true,
+      search: async () => {
+        throw new Error("GET answered 403");
+      },
+      details: async () => listing(),
+    };
+    assert.equal(await pollOnce([SEARCH, SEARCH], { ...h.deps, sources: [blocked] }), 2);
   });
 
   it("opens a source once per pass, closes it, and skips searches it does not handle", async () => {

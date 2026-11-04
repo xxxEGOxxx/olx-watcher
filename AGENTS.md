@@ -17,7 +17,8 @@ for OLX. Add another only if it clearly beats ~50 lines of glue, and say why in 
 - One listing: `npm run parse -- <olx or otodom url>` prints the Telegram message (`--send`
   delivers it).
 - Deploy: `npm run deploy:production` (see "Deploy" below). Ops: `npm run server -- status|logs|
-  restart|once|env-push`. Home otodom runner: `npm run home -- install|status|logs|once|uninstall`.
+  restart|once|env-push`. otodom runs in GitHub Actions (`.github/workflows/otodom.yml`):
+  `gh workflow run otodom`, `gh run list -w otodom`, `gh run view --log`.
 
 ## Layout
 
@@ -68,12 +69,15 @@ deploy or anything unusual.
 - Isolated compose project `olx-watcher-production`: no host ports, no `public-edge` network, its own
   `data` volume. Never touch `/opt/flotana`, `/opt/rts-partner`, `/opt/wireguard`, their containers,
   networks, Caddyfile, or run `docker system prune`/`docker compose down` for other projects.
-- **Where each site runs.** The server runs `SOURCES=olx` (Chromium; ~380 MB peak during a poll,
+- **Where each site runs.** The VPS runs `SOURCES=olx` (Chromium; ~380 MB peak during a poll,
   container limit 768 MB). otodom's CDN refuses every request from the VPS, even to a real
-  browser, so otodom runs at home: `npm run home -- install` (launchd on the Mac, `.env.home` with
-  `SOURCES=otodom`). With the home runner active set `SKIP_OTODOM_COPIES=1` on the server so OLX
-  copies of otodom ads are not sent twice. The WireGuard VPN on that server
+  browser, so otodom runs in GitHub Actions every 15 minutes (`.github/workflows/otodom.yml`,
+  `SOURCES=otodom`, SQLite kept in `actions/cache`, secrets `TELEGRAM_BOT_TOKEN`,
+  `TELEGRAM_CHAT_ID`, `SEARCH_URLS`). The VPS sets `SKIP_OTODOM_COPIES=1` so OLX copies of otodom
+  ads are not sent twice. No runner on the owner's computers. The WireGuard VPN on that server
   (`~/Developer/wireguard`) exits through the same blocked IP; it does not help otodom.
+- A one-shot run (`--once`) exits 1 when a search could not be read, so a blocked or changed site
+  turns the Actions run red instead of failing silently.
 
 ## Git
 
