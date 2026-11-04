@@ -24,10 +24,14 @@ releases. Do not delete it: it is the "already sent" memory; losing it re-warms 
 ## First deploy
 
 1. Create a bot with @BotFather, get your chat id (e.g. @userinfobot), fill `.env` from
-   `.env.example`. Set `SOURCE=otodom` and `SEARCH_URLS`. Note: the server IP is blocked by otodom (`docs/access.md`), so on the VPS every search currently fails.
+   `.env.example`. On the server: `SOURCES=olx`, `SEARCH_URLS` (OLX searches; otodom ones are
+   ignored there), `SKIP_OTODOM_COPIES=1` once the home otodom runner is installed.
 2. `npm run server -- env-push`
 3. Commit, push `main`, then `npm run deploy:production`.
-4. `npm run server -- logs` — expect `started` and `search polled` lines.
+4. `npm run server -- logs` — expect `started`, then `search warmed` on the first poll and
+   `search polled` afterwards.
+5. otodom (optional): `cp .env.example .env.home`, set `SOURCES=otodom`, then
+   `npm run home -- install` on the Mac.
 
 ## Ordinary release
 
@@ -55,16 +59,17 @@ Manual rollback: `ssh flotana`, `cd /opt/olx-watcher/previous`, then
 `OLX_ENV_FILE=/opt/olx-watcher/.env OLX_IMAGE_TAG=$(basename $(pwd -P)) docker compose -p olx-watcher-production up -d watcher`
 and re-point `current`.
 
-## Blocked egress
+## Egress
 
-otodom and OLX answer 403 to every request from this VPS (datacenter IP block, see
-`docs/access.md`). The container stays healthy (the heartbeat does not depend on fetch success) but
-logs `search failed … answered 403`. Do not deploy with `SOURCE=otodom` expecting results until the
-"where polling runs" decision is made.
+OLX answers this VPS to a stock headless Chromium (the image ships Playwright's headless shell;
+measured 52 ads in 7 s, ~380 MB peak, inside the hardened container). otodom refuses every request
+from this IP, browser or not, so otodom is polled by the home runner (`ops/home.sh`). A
+`search failed … answered 403` line from OLX means its rules changed: report it, do not disguise
+the browser (`docs/access.md`).
 
 ## VPN
 
 `~/Developer/wireguard` runs wg-easy on the same server (full tunnel). Connect from the Mac with
 `sudo wg-quick up ~/Developer/wireguard/clients/mac.conf`; `curl https://api.ipify.org` then shows
-`188.245.184.9`. Use it to reproduce what the server sees. It does not change OLX's verdict: the
-server IP itself gets the 403. Never modify the wireguard project from here.
+`188.245.184.9`. Use it to reproduce what the server sees. It does not unblock otodom: the VPN exits
+through the blocked server IP. Never modify the wireguard project from here.

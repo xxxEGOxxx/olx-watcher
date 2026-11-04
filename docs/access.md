@@ -1,66 +1,67 @@
 # Site access
 
-All checks below use the project's honest client (`User-Agent: olx-watcher/0.1 (personal rental
-alerts)`, no browser headers), measured 2026-11-04/05.
+Measured 2026-11-04/05. "Honest client" = plain HTTP with `User-Agent: olx-watcher/0.1 (personal
+rental alerts)`. "Browser" = stock Playwright 1.64 headless Chromium, no stealth or overrides.
 
 | Target | Home Mac (residential IP) | `flotana` VPS (Hetzner 188.245.184.9) |
 |---|---|---|
-| otodom search page `/pl/wyniki/wynajem/...` | **200**, 36 ads + pagination in `__NEXT_DATA__` | 403 |
-| otodom ad page `/pl/oferta/...` | **200**, full ad in `__NEXT_DATA__` | 403 |
-| otodom `robots.txt` | 200 (search and ad pages allowed) | 403 |
-| OLX ad page `/d/oferta/...` | GET 403, HEAD 200 | GET 403, HEAD 200 |
-| OLX search page / `api/v1/offers` | GET 403, HEAD 200 | GET 403, HEAD 200 |
+| otodom pages, honest client | **200** (`__NEXT_DATA__` has full data) | 403 |
+| otodom pages, browser | 403 (HeadlessChrome UA) | 403 |
+| otodom other hosts (`/api/query`, `m.`, `api.`), robots.txt | 200 | 403 |
+| OLX pages / `api/v1/offers`, honest client | flaky: 200 or 403 depending on the day and HTTP version | 403 (HTTP/1.1 and HTTP/2) |
+| OLX in a browser page (`page.evaluate(fetch)`) | **200** | **200** (52 ads in 7 s) |
+
+So: **OLX runs on the server in Chromium; otodom runs at home with the honest client.**
 
 Notes:
 
-- Plain `curl` (UA `curl/x`) or a bare `Mozilla/5.0` gets 403 from home too; the honest
-  identifying UA is what passes. Do not "improve" this by imitating a browser.
-- OLX does not block the VPS IP (HEAD answers 200 from both networks); its CloudFront rule
-  rejects every GET that does not come from a real browser. Driving a browser (Playwright,
-  headless or not) to get past that rule was stopped by the agent's safety check as bot-detection
-  circumvention, so it is not used unless the owner explicitly decides otherwise.
-- OLX real-estate ads from agencies and many private owners
-  are cross-posted to otodom (`isCrossListed`); ads posted only on OLX are not covered.
-- The datacenter block applies to the whole VPS IP, so the WireGuard VPN on that server does not
-  help: it exits through the same IP.
+- otodom sits behind one CloudFront distribution whose WAF refuses the whole Hetzner range on every
+  host and path. It is an address rule, not a client rule: the same request passes from home and
+  from other clouds. Open-source bots that read otodom (e.g. `Dotims/overheads`) run from GitHub
+  Actions (Azure addresses) or from home; the rest use paid proxy/scraping services. Proxies are out
+  of scope (AGENTS.md); GitHub Actions as a scraper host is outside GitHub's Actions terms, so not
+  used.
+- OLX's CloudFront rules change: other projects saw HTTP/1.1 refused while HTTP/2 passed, then the
+  reverse. A real browser page is the stable path, and is what the owner chose.
+- A plain `curl` UA or a bare `Mozilla/5.0` gets 403 from otodom even at home; the identifying UA
+  passes. Do not "improve" this by imitating a browser.
+- Only about a quarter of fresh otodom ads are cross-posted to OLX (10 of 37 in a Poznań sample,
+  `partner.code = otodom_pl`, `external_url` = the otodom link), so OLX alone does not cover
+  otodom. Those copies get the id `otodom:<ID…>` so both runners agree on identity; the server drops
+  them with `SKIP_OTODOM_COPIES=1` when the home runner is active (separate databases cannot
+  de-duplicate across runners).
+- The WireGuard VPN on the VPS exits through the same IP, so it reproduces the server's view and
+  does not unblock otodom.
 
-## What otodom gives (see `test/fixtures/`)
+## OLX JSON API (what `src/sources/olx.ts` uses)
 
-- Search item: `id`, `slug`, `title`, `totalPrice`, `rentPrice` (czynsz), `areaInSquareMeters`,
-  `roomsNumber`, `isPrivateOwner`, `createdAtFirst`, `isPromoted`.
-- Ad: `characteristics` with `price`, `rent` (czynsz administracyjny), `deposit` (kaucja), `m`,
-  `rooms_num`, `floor_no`, `free_from`; `advertiserType` (`private`/`business`); `location` with
-  coordinates, `mapDetails.radius` (0 = exact point), reverse-geocoded city/district/street;
-  `description` HTML (commission and utilities are only ever in this text).
+Called from a page on `https://www.olx.pl` with same-origin `fetch`, exactly like the web app.
 
-## What OLX gives inside a browser (checked by hand in a normal browser tab, 2026-11-05)
-
-The OLX web app itself calls a JSON API that returns complete ads, so one request per poll would be
-enough if it were reachable:
-
+- Friendly path → ids: `GET /api/v1/friendly-links/query-params/nieruchomosci,mieszkania,wynajem,poznan/`
+  → `{data:{category_id:15, region_id:1, city_id:13983}}` (cached per runner).
 - Search: `GET /api/v1/offers/?offset=0&limit=40&category_id=15&region_id=1&city_id=13983&sort_by=created_at:desc`
-  (category 15 = mieszkania/wynajem, region 1 = Wielkopolskie, city 13983 = Poznań) → `data[]` of
-  full ads, `links.next` for paging. Sorting follows `last_refresh_time`, so refreshed ads come back
-  on top (id de-duplication handles it). Promoted ads are mixed in.
-- Ad: `GET /api/v1/offers/<id>/` → same object.
+  plus the web URL's filters without the `search[...]` wrapper
+  (`search[filter_float_price:to]=3000` → `filter_float_price:to=3000`,
+  `search[filter_enum_rooms][0]=two` → `filter_enum_rooms[0]=two`, `/q-balkon/` → `query=balkon`).
+  Returns `data[]` of full ads (promoted ones mixed in, so up to ~52), `links.next` for paging.
+- Ad: `GET /api/v1/offers/<numeric id>/`. Ad pages only show the numeric id in the footer
+  (`ID: 1089901642`).
 - Ad fields: `id`, `url`, `title`, `description` (HTML), `created_time`, `last_refresh_time`,
-  `business` (bool), `partner.code` (`otodom_pl` when cross-posted), `location.city/district`,
-  `map.lat/lon/radius/show_detailed` (approximate unless `show_detailed`), `params[]` with keys
-  `price` (`value.value` number), `rent` (czynsz dodatkowo, `value.key` string like `"621"`), `m`,
-  `rooms` (`one`, `two`...), `floor_select`, `furniture`, `pets`, `builttype`.
+  `business` (bool), `partner.code`, `external_url`, `location.city/district`,
+  `map.lat/lon/radius/show_detailed` (approximate unless `show_detailed`), `params[]`: `price`
+  (`value.value` number), `rent` (czynsz dodatkowo, `value.key` like `"621"`), `m`, `rooms`
+  (`one`…`four`), `floor_select`, `furniture`, `pets`, `builttype`, `winda`.
 
-## Open decision: where polling runs
+## otodom data (see `test/fixtures/`)
 
-The VPS cannot fetch. Options:
+- Search item: `id`, `slug`, `title`, `totalPrice`, `rentPrice`, `areaInSquareMeters`,
+  `roomsNumber`, `isPrivateOwner`, `createdAtFirst`, `isPromoted`.
+- Ad: `characteristics` with `price`, `rent`, `deposit`, `m`, `rooms_num`, `floor_no`,
+  `free_from`; `advertiserType`; `location` with coordinates, `mapDetails.radius` (0 = exact),
+  reverse-geocoded city/district/street; `description` HTML (commission and utilities are only in
+  this text).
 
-1. **Run the watcher at home**: on the Mac as a `launchd` agent (polls only while the Mac is
-   awake), or on an always-on home device (Raspberry Pi, NAS, router with Docker). Same code and
-   Docker image; the server is not involved.
-2. **Keep the server for Telegram, fetch at home**: a small home agent fetches and pushes parsed
-   listings to the server bot. More moving parts; only worth it once the bot gets interactive
-   features (commands, filters) that should stay online.
-3. **Manual links**: the bot accepts a listing link and replies with the breakdown. Still needs a
-   fetch from an unblocked network, so it inherits the same constraint.
+## If the home runner is not enough
 
-Routing the server's requests through a home connection or a proxy service to get around the
-datacenter block is out of scope (see AGENTS.md).
+The Mac polls only while awake. An always-on home device (Raspberry Pi, NAS, router with Docker)
+can run the same image with `SOURCES=otodom`. Nothing about otodom changes on the server side.

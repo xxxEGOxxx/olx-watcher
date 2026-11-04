@@ -1,7 +1,7 @@
 # Product
 
-Personal tool: one user, one Telegram chat, a few saved apartment-rental searches on otodom.pl
-(OLX real-estate ads are cross-posted there). Goal: see the real cost of a listing at a glance instead of digging through the
+Personal tool: one user, one Telegram chat, a few saved apartment-rental searches on OLX.pl
+and otodom.pl, polled every 15 minutes. Goal: see the real cost of a listing at a glance instead of digging through the
 description.
 
 ## Message per new listing

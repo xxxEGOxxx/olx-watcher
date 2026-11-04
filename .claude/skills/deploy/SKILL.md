@@ -32,4 +32,5 @@ ssh flotana 'cd /opt/olx-watcher/current && OLX_ENV_FILE=/opt/olx-watcher/.env O
 - Touch `/opt/flotana`, `/opt/rts-partner`, `/opt/wireguard`, their containers, networks or Caddy.
 - `docker system prune`, delete the `olx-watcher-production_data` volume, or download/print
   `/opt/olx-watcher/.env`.
-- Work around OLX's 403 (header/fingerprint spoofing, proxies, CAPTCHA solving).
+- Disguise the browser or HTTP client when a site answers 403 (stealth plugins, header/fingerprint
+  spoofing, proxies, CAPTCHA solving). Report the 403 instead.
