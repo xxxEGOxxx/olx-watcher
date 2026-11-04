@@ -1,0 +1,10 @@
+.git
+.claude
+node_modules
+data
+docs
+ops
+test
+.env
+.env.*
+*.md
