@@ -2,6 +2,7 @@ import { extractDescriptionCosts, htmlToText } from "../description.ts";
 import type { AgencyFee, Listing } from "../listing.ts";
 import { plnToGrosze } from "../money.ts";
 import type { BrowserSession } from "./browser.ts";
+import { otodomRefId } from "./otodom.ts";
 import type { ListingRef, ListingSource } from "./types.ts";
 
 const ORIGIN = "https://www.olx.pl";
@@ -77,9 +78,9 @@ export function olxAdIdFromHtml(html: string): string {
 
 /** OLX copies of otodom ads share the otodom id ("ID4DQGY") so cross-site duplicates collapse. */
 export function olxRefId(ad: OlxAd): string {
-  const otodomId =
-    ad.partner?.code === "otodom_pl" ? /-(ID[0-9A-Za-z]+)$/.exec(ad.external_url ?? "")?.[1] : null;
-  return otodomId ? `otodom:${otodomId}` : `olx:${ad.id}`;
+  return ad.partner?.code === "otodom_pl" && ad.external_url
+    ? otodomRefId(ad.external_url, `olx-${ad.id}`)
+    : `olx:${ad.id}`;
 }
 
 export function parseOlxAd(ad: OlxAd): Listing {

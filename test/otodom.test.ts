@@ -15,7 +15,7 @@ const page = (name: string) =>
 describe("otodom", () => {
   it("parses an ad page into a listing with structured costs and an exact point", () => {
     const listing = parseAd(page("otodom-ad.json"));
-    assert.equal(listing.id, "otodom:68510486");
+    assert.equal(listing.id, "otodom:ID4DsHQ");
     assert.equal(listing.price, 180_000);
     assert.equal(listing.adminRent, 60_000);
     assert.equal(listing.deposit, 250_000);
@@ -38,7 +38,7 @@ describe("otodom", () => {
     const refs = parseSearch(page("otodom-search.json"));
     assert.equal(refs.length, 6);
     assert.deepEqual(refs[0], {
-      id: "otodom:68602616",
+      id: "otodom:ID4DQFO",
       url: "https://www.otodom.pl/pl/oferta/komfortowa-kawalerka-z-garazem-w-nowym-budynku-przy-dolnej-wildzie-ID4DQFO",
     });
   });

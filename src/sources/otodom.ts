@@ -41,12 +41,20 @@ export function normalizeSearchUrl(searchUrl: string): string {
   return url.toString();
 }
 
+/**
+ * "otodom:ID4DQGY" from the link's trailing token. Links are what both otodom and OLX copies
+ * (`external_url`) share, so the same flat gets the same id on every runner.
+ */
+export function otodomRefId(urlOrSlug: string, fallbackId: number | string): string {
+  return `otodom:${/-(ID[0-9A-Za-z]+)\/?$/.exec(urlOrSlug)?.[1] ?? fallbackId}`;
+}
+
 export function parseSearch(html: string): ListingRef[] {
   const data = extractNextData(html) as OtodomSearch;
   const items = data.props?.pageProps?.data?.searchAds?.items;
   if (!Array.isArray(items)) throw new Error("otodom search: searchAds.items missing");
   return items.map((item) => ({
-    id: `otodom:${item.id}`,
+    id: otodomRefId(item.slug, item.id),
     url: `${ORIGIN}/pl/oferta/${item.slug}`,
   }));
 }
@@ -80,7 +88,7 @@ export function parseAd(html: string): Listing {
   const area = Number(characteristic("m"));
 
   return {
-    id: `otodom:${ad.id}`,
+    id: otodomRefId(ad.url, ad.id),
     url: ad.url,
     title: ad.title,
     description,
