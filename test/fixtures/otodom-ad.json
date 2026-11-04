@@ -1,0 +1,193 @@
+{
+  "props": {
+    "pageProps": {
+      "ad": {
+        "id": 68510486,
+        "title": "Ataner, kawalerka przy Parku Starego Browaru, od zaraz!",
+        "url": "https://www.otodom.pl/pl/oferta/ataner-kawalerka-przy-parku-starego-browaru-od-zaraz-ID4DsHQ",
+        "createdAt": "2026-10-09T11:55:54Z",
+        "modifiedAt": "2026-10-27T10:07:31Z",
+        "advertiserType": "business",
+        "advertType": "AGENCY",
+        "description": "Biuro nieruchomości Immo House poleca na wynajem przestronną kawalerkę, położoną w samym <strong>Centrum Poznania, przy ul. Ogrodowej 17.</strong> <br>Nieruchomość o powierzchni 29 m2 znajduję się na 3 piętrze w budynku apartamentowym, renomowanego poznańskiego dewelopera <strong>ATANER</strong>. <br>Mieszkanie składa się z przestronnej części dziennej połączonej z aneksem kuchennym, łazienki oraz korytarza. <br><u>Wyposażone w ruchomości widoczne na zdjęciach.&nbsp;</u><br><br>Lokal jest jasny, dobrze doświetlony, położony w doskonałej lokalizacji. <strong>Duże okna usytuowane od południowej strony świata z widokiem na park i Stary Browar.</strong> Ogrzewanie miejskie, brak gazu.<u> Budynek monitorowany, ochrona 24H</u>. Czynsz administracyjny wynosi ok. 600 zł<br><br>Lokalizacja idealna dla osób studiujących i pracujących. W najbliższej okolicy mnogość restauracji, kawiarni, punktów usługowych. Stary Browar znajduję się zaledwie z drugiej strony Parku. Przystanki autobusowe i tramwajowe znajdują się w najbliższej okolicy. Szybki dojazd w każdy zakątek miasta.&nbsp;<br><br><strong>CENA: 1800zł/miesiąc</strong><br>KAUCJA: 2500 zł&nbsp;<br><br>Wymagana umowa najmu okazjonalnego.&nbsp;<br><br><strong>Zapraszam do kontaktu</strong><br>[agent]<br>IMMO HOUSE<br>tel. [usunięto]<br><br/>\n<br/>\nOferta wysłana z programu dla biur nieruchomości ASARI CRM ()<br/>\n<br/>",
+        "characteristics": [
+          {
+            "key": "price",
+            "value": "1800",
+            "currency": "PLN",
+            "localizedValue": "1800 zł"
+          },
+          {
+            "key": "rent",
+            "value": "600",
+            "currency": "PLN",
+            "localizedValue": "600 zł"
+          },
+          {
+            "key": "deposit",
+            "value": "2500",
+            "currency": "PLN",
+            "localizedValue": "2500 zł"
+          },
+          {
+            "key": "m",
+            "value": "29",
+            "localizedValue": "29 m²",
+            "currency": ""
+          },
+          {
+            "key": "building_type",
+            "value": "apartment",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "floor_no",
+            "value": "floor_3",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "construction_status",
+            "value": "ready_to_use",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "building_material",
+            "value": "silikat",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "windows_type",
+            "value": "plastic",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "remote_services",
+            "value": "1",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "heating",
+            "value": "urban",
+            "localizedValue": "",
+            "currency": ""
+          },
+          {
+            "key": "rooms_num",
+            "value": "1",
+            "localizedValue": "1",
+            "currency": ""
+          },
+          {
+            "key": "building_floors_num",
+            "value": "5",
+            "localizedValue": "5",
+            "currency": ""
+          },
+          {
+            "key": "free_from",
+            "value": "2026-10-08",
+            "localizedValue": "2026-10-08",
+            "currency": ""
+          }
+        ],
+        "location": {
+          "coordinates": {
+            "latitude": 52.40381,
+            "longitude": 16.929478,
+            "__typename": "Coordinates"
+          },
+          "mapDetails": {
+            "radius": 0,
+            "zoom": 12,
+            "__typename": "MapDetails"
+          },
+          "reverseGeocoding": {
+            "locations": [
+              {
+                "id": "wielkopolskie",
+                "locationLevel": "voivodeship",
+                "name": "wielkopolskie",
+                "fullName": "wielkopolskie",
+                "fullNameItems": ["wielkopolskie"],
+                "parentIds": [],
+                "__typename": "BasicLocationObject"
+              },
+              {
+                "id": "wielkopolskie/poznan/poznan/poznan",
+                "locationLevel": "city_or_village",
+                "name": "Poznań",
+                "fullName": "Poznań, wielkopolskie",
+                "fullNameItems": ["Poznań", "wielkopolskie"],
+                "parentIds": [
+                  "wielkopolskie",
+                  "wielkopolskie/poznan",
+                  "wielkopolskie/poznan/poznan"
+                ],
+                "__typename": "BasicLocationObject"
+              },
+              {
+                "id": "wielkopolskie/poznan/poznan/poznan/stare-miasto",
+                "locationLevel": "district",
+                "name": "Stare Miasto",
+                "fullName": "Stare Miasto, Poznań, wielkopolskie",
+                "fullNameItems": ["Stare Miasto", "Poznań", "wielkopolskie"],
+                "parentIds": [
+                  "wielkopolskie",
+                  "wielkopolskie/poznan",
+                  "wielkopolskie/poznan/poznan",
+                  "wielkopolskie/poznan/poznan/poznan"
+                ],
+                "__typename": "BasicLocationObject"
+              },
+              {
+                "id": "wielkopolskie/poznan/poznan/poznan/stare-miasto/centrum",
+                "locationLevel": "residential",
+                "name": "Centrum",
+                "fullName": "Centrum, Stare Miasto, Poznań, wielkopolskie",
+                "fullNameItems": ["Centrum", "Stare Miasto", "Poznań", "wielkopolskie"],
+                "parentIds": [
+                  "wielkopolskie",
+                  "wielkopolskie/poznan",
+                  "wielkopolskie/poznan/poznan",
+                  "wielkopolskie/poznan/poznan/poznan",
+                  "wielkopolskie/poznan/poznan/poznan/stare-miasto"
+                ],
+                "__typename": "BasicLocationObject"
+              }
+            ]
+          },
+          "address": {
+            "street": {
+              "name": "ul. Ogrodowa",
+              "number": null
+            },
+            "subdistrict": null,
+            "district": null,
+            "city": null,
+            "county": null,
+            "municipality": null,
+            "province": null,
+            "postalCode": null
+          }
+        },
+        "target": {
+          "Area": "29",
+          "City": "poznan",
+          "Deposit": 2500,
+          "OfferType": "wynajem",
+          "Price": 1800,
+          "ProperType": "mieszkanie",
+          "Rent": 600,
+          "Rooms_num": ["1"],
+          "user_type": "agency"
+        }
+      }
+    }
+  }
+}

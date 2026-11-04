@@ -48,3 +48,18 @@ function agencyFee(text: string): AgencyFee {
   if (fixed !== null) return { kind: "amount", amount: fixed };
   return { kind: "unknown" };
 }
+
+const ENTITIES: Record<string, string> = { nbsp: " ", amp: "&", lt: "<", gt: ">", quot: '"' };
+
+/** Listing descriptions arrive as HTML; costs and messages need plain text. */
+export function htmlToText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>|<\/p>|<\/li>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&(nbsp|amp|lt|gt|quot);/g, (_, name: string) => ENTITIES[name] ?? "")
+    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}

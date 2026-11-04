@@ -1,0 +1,153 @@
+{
+  "props": {
+    "pageProps": {
+      "data": {
+        "searchAds": {
+          "items": [
+            {
+              "id": 68602616,
+              "slug": "komfortowa-kawalerka-z-garazem-w-nowym-budynku-przy-dolnej-wildzie-ID4DQFO",
+              "title": "Komfortowa kawalerka z garażem w nowym budynku przy Dolnej Wildzie",
+              "href": "[lang]/ad/komfortowa-kawalerka-z-garazem-w-nowym-budynku-przy-dolnej-wildzie-ID4DQFO",
+              "createdAtFirst": "2026-11-04T21:57:50+00:00",
+              "dateCreated": "2026-11-04T21:57:50Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": true,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 2200,
+                "currency": "PLN"
+              },
+              "rentPrice": {
+                "value": 500,
+                "currency": "PLN"
+              },
+              "areaInSquareMeters": 29,
+              "roomsNumber": "ONE",
+              "isPromoted": false
+            },
+            {
+              "id": 68602371,
+              "slug": "willa-miejska-po-rewitalizacji-mieszkanie-po-kapitalnym-remoncie-ID4DQBR",
+              "title": "Willa miejska po rewitalizacji, mieszkanie po kapitalnym remoncie",
+              "href": "[lang]/ad/willa-miejska-po-rewitalizacji-mieszkanie-po-kapitalnym-remoncie-ID4DQBR",
+              "createdAtFirst": "2026-11-04T19:58:23+00:00",
+              "dateCreated": "2026-11-04T19:58:23Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": true,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 3250,
+                "currency": "PLN"
+              },
+              "rentPrice": {
+                "value": 0,
+                "currency": "PLN"
+              },
+              "areaInSquareMeters": 55,
+              "roomsNumber": "THREE",
+              "isPromoted": false
+            },
+            {
+              "id": 68602266,
+              "slug": "2-pokojowe-mieszkanie-loggia-48m2-rataje-ID4DQAa",
+              "title": "2 pokojowe mieszkanie | loggia | 48m2 | Rataje",
+              "href": "[lang]/ad/2-pokojowe-mieszkanie-loggia-48m2-rataje-ID4DQAa",
+              "createdAtFirst": "2026-11-04T19:11:43+00:00",
+              "dateCreated": "2026-11-04T19:11:43Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": false,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 2100,
+                "currency": "PLN"
+              },
+              "rentPrice": {
+                "value": 900,
+                "currency": "PLN"
+              },
+              "areaInSquareMeters": 48,
+              "roomsNumber": "TWO",
+              "isPromoted": false
+            },
+            {
+              "id": 68602129,
+              "slug": "mieszkanie-31-30-m-poznan-ID4DQxX",
+              "title": "Mieszkanie, 31,30 m², Poznań",
+              "href": "[lang]/ad/mieszkanie-31-30-m-poznan-ID4DQxX",
+              "createdAtFirst": "2026-11-04T18:16:29+00:00",
+              "dateCreated": "2026-11-04T18:16:29Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": false,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 1500,
+                "currency": "PLN"
+              },
+              "rentPrice": {
+                "value": 522,
+                "currency": "PLN"
+              },
+              "areaInSquareMeters": 31.3,
+              "roomsNumber": "ONE",
+              "isPromoted": false
+            },
+            {
+              "id": 68601719,
+              "slug": "bez-prowizji-mieszkanie-1-pokojowe-w-centrum-poznania-parter-ID4DQrl",
+              "title": "BEZ PROWIZJI! Mieszkanie 1-pokojowe w centrum Poznania, parter.",
+              "href": "[lang]/ad/bez-prowizji-mieszkanie-1-pokojowe-w-centrum-poznania-parter-ID4DQrl",
+              "createdAtFirst": "2026-11-04T16:38:04+00:00",
+              "dateCreated": "2026-11-04T16:38:04Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": true,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 2460,
+                "currency": "PLN"
+              },
+              "rentPrice": {
+                "value": 2100,
+                "currency": "PLN"
+              },
+              "areaInSquareMeters": 25,
+              "roomsNumber": "ONE",
+              "isPromoted": false
+            },
+            {
+              "id": 68601434,
+              "slug": "mieszkanie-25-m-poznan-ID4DQmK",
+              "title": "Mieszkanie, 25 m², Poznań",
+              "href": "[lang]/ad/mieszkanie-25-m-poznan-ID4DQmK",
+              "createdAtFirst": "2026-11-04T15:35:05+00:00",
+              "dateCreated": "2026-11-04T15:35:05Z",
+              "pushedUpAt": null,
+              "isPrivateOwner": false,
+              "estate": "FLAT",
+              "transaction": "RENT",
+              "totalPrice": {
+                "value": 1700,
+                "currency": "PLN"
+              },
+              "rentPrice": null,
+              "areaInSquareMeters": 25,
+              "roomsNumber": "THREE",
+              "isPromoted": false
+            }
+          ],
+          "pagination": {
+            "itemsPerPage": 36,
+            "totalItems": 1175,
+            "totalPages": 33,
+            "currentPage": 1
+          }
+        }
+      }
+    }
+  }
+}

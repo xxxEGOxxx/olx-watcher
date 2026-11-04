@@ -24,7 +24,7 @@ releases. Do not delete it: it is the "already sent" memory; losing it re-warms 
 ## First deploy
 
 1. Create a bot with @BotFather, get your chat id (e.g. @userinfobot), fill `.env` from
-   `.env.example`. Choose `OLX_SOURCE` (only `none` exists until `docs/olx-access.md` is resolved).
+   `.env.example`. Set `SOURCE=otodom` and `SEARCH_URLS`. Note: the server IP is blocked by otodom (`docs/access.md`), so on the VPS every search currently fails.
 2. `npm run server -- env-push`
 3. Commit, push `main`, then `npm run deploy:production`.
 4. `npm run server -- logs` — expect `started` and `search polled` lines.
@@ -54,6 +54,13 @@ npm run server -- env-push   # upload local .env (then restart)
 Manual rollback: `ssh flotana`, `cd /opt/olx-watcher/previous`, then
 `OLX_ENV_FILE=/opt/olx-watcher/.env OLX_IMAGE_TAG=$(basename $(pwd -P)) docker compose -p olx-watcher-production up -d watcher`
 and re-point `current`.
+
+## Blocked egress
+
+otodom and OLX answer 403 to every request from this VPS (datacenter IP block, see
+`docs/access.md`). The container stays healthy (the heartbeat does not depend on fetch success) but
+logs `search failed … answered 403`. Do not deploy with `SOURCE=otodom` expecting results until the
+"where polling runs" decision is made.
 
 ## VPN
 

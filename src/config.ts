@@ -1,4 +1,4 @@
-export type SourceKind = "none";
+export type SourceKind = "none" | "otodom";
 
 export type Config = {
   telegramBotToken: string;
@@ -9,7 +9,8 @@ export type Config = {
   dataDir: string;
 };
 
-const SOURCES: readonly SourceKind[] = ["none"];
+const SOURCES: readonly SourceKind[] = ["none", "otodom"];
+const SOURCE_HOSTS: Record<SourceKind, string | null> = { none: null, otodom: "www.otodom.pl" };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const errors: string[] = [];
@@ -21,19 +22,20 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
 
   const telegramBotToken = required("TELEGRAM_BOT_TOKEN");
   const telegramChatId = required("TELEGRAM_CHAT_ID");
-  const searchUrls = (env.OLX_SEARCH_URLS ?? "")
+  const searchUrls = (env.SEARCH_URLS ?? "")
     .split("|")
     .map((url) => url.trim())
     .filter(Boolean);
-  if (searchUrls.length === 0) errors.push("OLX_SEARCH_URLS needs at least one URL");
-  for (const url of searchUrls) {
-    if (!URL.canParse(url) || new URL(url).hostname !== "www.olx.pl") {
-      errors.push(`OLX_SEARCH_URLS: not an olx.pl URL: ${url}`);
+  if (searchUrls.length === 0) errors.push("SEARCH_URLS needs at least one URL");
+
+  const source = (env.SOURCE ?? "none") as SourceKind;
+  if (!SOURCES.includes(source)) errors.push(`SOURCE must be one of: ${SOURCES.join(", ")}`);
+  const host = SOURCE_HOSTS[source];
+  for (const url of host ? searchUrls : []) {
+    if (!URL.canParse(url) || new URL(url).hostname !== host) {
+      errors.push(`SEARCH_URLS: ${url} is not a ${host} URL (SOURCE=${source})`);
     }
   }
-
-  const source = (env.OLX_SOURCE ?? "none") as SourceKind;
-  if (!SOURCES.includes(source)) errors.push(`OLX_SOURCE must be one of: ${SOURCES.join(", ")}`);
 
   const pollIntervalMinutes = Number(env.POLL_INTERVAL_MINUTES ?? "10");
   if (!Number.isFinite(pollIntervalMinutes) || pollIntervalMinutes < 5) {

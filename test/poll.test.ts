@@ -2,15 +2,15 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { loadConfig } from "../src/config.ts";
 import { pollOnce } from "../src/index.ts";
-import type { Listing } from "../src/listing.ts";
+import type { ListingRef, ListingSource } from "../src/sources/types.ts";
 import { openStore } from "../src/store.ts";
 import type { TelegramClient } from "../src/telegram/client.ts";
 import { escapeHtml, formatListing } from "../src/telegram/format.ts";
 import { listing } from "./costs.test.ts";
 
-const SEARCH = "https://www.olx.pl/nieruchomosci/mieszkania/wynajem/warszawa/";
+const SEARCH = "https://www.otodom.pl/pl/wyniki/wynajem/mieszkanie/mazowieckie/warszawa";
 
-function fakeTelegram() {
+function harness() {
   const sent: string[] = [];
   const telegram: TelegramClient = {
     sendMessage: async (_chat, html) => {
@@ -18,27 +18,62 @@ function fakeTelegram() {
     },
     sendLocation: async () => {},
   };
-  return { sent, telegram };
+  let refs: ListingRef[] = [];
+  const failing = new Set<string>();
+  const source: ListingSource = {
+    kind: "test",
+    search: async () => refs,
+    details: async (ref) => {
+      if (failing.has(ref.id)) throw new Error("boom");
+      return listing({ id: ref.id, title: `T ${ref.id}` });
+    },
+  };
+  const deps = {
+    source,
+    store: openStore(":memory:"),
+    telegram,
+    chatId: "1",
+    delay: async () => {},
+  };
+  const ref = (id: string) => ({ id, url: `https://www.otodom.pl/pl/oferta/${id}` });
+  return {
+    sent,
+    deps,
+    failing,
+    setRefs: (ids: string[]) => {
+      refs = ids.map(ref);
+    },
+  };
 }
 
 describe("pollOnce", () => {
   it("stays silent on the first pass and notifies only new listings afterwards", async () => {
-    let batch: Listing[] = [listing({ id: "olx:1" })];
-    const source = { kind: "none" as const, fetchLatest: async () => batch };
-    const store = openStore(":memory:");
-    const { sent, telegram } = fakeTelegram();
-    const deps = { source, store, telegram, chatId: "1" };
+    const h = harness();
+    h.setRefs(["a"]);
+    await pollOnce([SEARCH], h.deps);
+    assert.equal(h.sent.length, 0);
 
-    await pollOnce([SEARCH], deps);
-    assert.equal(sent.length, 0);
+    h.setRefs(["c", "b", "a"]);
+    await pollOnce([SEARCH], h.deps);
+    assert.deepEqual(
+      h.sent.map((html) => /T (\w)/.exec(html)?.[1]),
+      ["b", "c"],
+    );
 
-    batch = [listing({ id: "olx:2", title: "Nowe" }), listing({ id: "olx:1" })];
-    await pollOnce([SEARCH], deps);
-    assert.equal(sent.length, 1);
-    assert.match(sent[0] ?? "", /Nowe/);
+    await pollOnce([SEARCH], h.deps);
+    assert.equal(h.sent.length, 2);
+  });
 
-    await pollOnce([SEARCH], deps);
-    assert.equal(sent.length, 1);
+  it("retries a listing whose details failed", async () => {
+    const h = harness();
+    await pollOnce([SEARCH], h.deps);
+    h.setRefs(["x"]);
+    h.failing.add("x");
+    await pollOnce([SEARCH], h.deps);
+    assert.equal(h.sent.length, 0);
+    h.failing.clear();
+    await pollOnce([SEARCH], h.deps);
+    assert.equal(h.sent.length, 1);
   });
 });
 
@@ -53,15 +88,16 @@ describe("format", () => {
 });
 
 describe("config", () => {
-  it("rejects placeholders and non-OLX URLs", () => {
+  it("rejects placeholders and URLs of another site", () => {
     assert.throws(
       () =>
         loadConfig({
           TELEGRAM_BOT_TOKEN: "CHANGE_ME",
           TELEGRAM_CHAT_ID: "1",
-          OLX_SEARCH_URLS: "https://example.com/",
+          SOURCE: "otodom",
+          SEARCH_URLS: "https://www.olx.pl/nieruchomosci/",
         }),
-      /TELEGRAM_BOT_TOKEN is required[\s\S]*not an olx\.pl URL/,
+      /TELEGRAM_BOT_TOKEN is required[\s\S]*not a www\.otodom\.pl URL/,
     );
   });
 });

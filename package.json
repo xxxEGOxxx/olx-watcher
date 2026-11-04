@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm test",
     "deploy:production": "bash ops/deploy/production.sh",
-    "server": "bash ops/server.sh"
+    "server": "bash ops/server.sh",
+    "parse": "node --env-file-if-exists=.env src/parse-link.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.5",
