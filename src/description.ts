@@ -24,12 +24,16 @@ const UTILITIES = new RegExp(String.raw`media(?!\s+(?:w\s+cenie|wliczon))${AMOUN
 const FEE_AMOUNT = new RegExp(String.raw`prowizj\p{L}*${AMOUNT_AFTER}`, "iu");
 const FEE_PERCENT = /prowizj\p{L}*[^\d\n]{0,30}?(\d{1,3}(?:[.,]\d+)?)\s*%/iu;
 const NO_FEE =
-  /(bez\s+prowizji|0\s*%\s*prowizji|prowizj\p{L}*\s*:?\s*(?:0\s*%|0\s*zł|brak|nie\s+pobieramy))/iu;
+  /(bez\s+prowizji|brak\s+prowizji|0\s*%\s*prowizji|prowizj\p{L}*\s*:?\s*(?:0\s*%|0\s*zł|brak|nie\s+pobieramy))/iu;
+
+// "czynsz administracyjny (w tym wszystkie media)", "media wliczone": nothing extra to pay.
+const UTILITIES_INCLUDED =
+  /(w\s+tym\s+(?:wszystkie\s+)?media|media\s+(?:s[aą]\s+)?(?:w\s+cenie|wliczon)|z\s+mediami)/iu;
 
 export function extractDescriptionCosts(description: string): DescriptionCosts {
   return {
     adminRent: amount(ADMIN_RENT, description),
-    utilities: amount(UTILITIES, description),
+    utilities: amount(UTILITIES, description) ?? (UTILITIES_INCLUDED.test(description) ? 0 : null),
     deposit: amount(DEPOSIT, description),
     agencyFee: agencyFee(description),
   };
@@ -54,7 +58,7 @@ const ENTITIES: Record<string, string> = { nbsp: " ", amp: "&", lt: "<", gt: ">"
 /** Listing descriptions arrive as HTML; costs and messages need plain text. */
 export function htmlToText(html: string): string {
   return html
-    .replace(/<br\s*\/?>|<\/p>|<\/li>/gi, "\n")
+    .replace(/<br\s*\/?>\r?\n?|<\/p>|<\/li>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
     .replace(/&(nbsp|amp|lt|gt|quot);/g, (_, name: string) => ENTITIES[name] ?? "")
     .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))

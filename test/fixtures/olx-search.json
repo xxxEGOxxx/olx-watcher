@@ -1,0 +1,252 @@
+{
+  "data": [
+    {
+      "id": 1089901642,
+      "url": "https://www.olx.pl/d/oferta/wynajem-mieszkania-sw-marcin-32-CID3-ID1bL7cK.html",
+      "title": "Wynajem mieszkania Św. Marcin 32",
+      "created_time": "2026-08-07T15:15:10+02:00",
+      "last_refresh_time": "2026-11-03T14:35:27+01:00",
+      "description": "Do wynajęcia kawalerka na pierwszym piętrze. Zlokalizowana w samym centrum Poznania przy ul. Św Marcin 32 w zrewitalizowanej kamienicy z ogrzewaniem miejskim.<br />\nMieszkanie wolne od 01.12.2026.<br />\nWymagana forma umowy: najem okazjonalny. Umowa na 12 mcy z możliwością przedłużenia.<br />\nNajem bez zwierząt.<br />\nCzynsz miesięczny: 2000 zł<br />\nOpłaty administracyjne przy 1 osobie około : 621 zł<br />\nPrąd: dodatkowo płatny wg. zużycia<br />\nKaucja: 4000 zł<br />\nOferta bezpośrednio od właściciela.",
+      "promotion": { "top_ad": true, "highlighted": true },
+      "params": [
+        {
+          "key": "pets",
+          "name": "Zwierzęta",
+          "type": "select",
+          "value": { "key": "Nie", "label": "Nie" }
+        },
+        {
+          "key": "winda",
+          "name": "Winda",
+          "type": "select",
+          "value": { "key": "Tak", "label": "Tak" }
+        },
+        {
+          "key": "floor_select",
+          "name": "Poziom",
+          "type": "select",
+          "value": { "key": "floor_1", "label": "1" }
+        },
+        {
+          "key": "furniture",
+          "name": "Umeblowane",
+          "type": "select",
+          "value": { "key": "no", "label": "Nie" }
+        },
+        {
+          "key": "price",
+          "name": "Cena",
+          "type": "price",
+          "value": {
+            "value": 2000,
+            "type": "price",
+            "arranged": false,
+            "budget": false,
+            "currency": "PLN",
+            "negotiable": false,
+            "label": "2 000 zł"
+          }
+        },
+        {
+          "key": "builttype",
+          "name": "Rodzaj zabudowy",
+          "type": "select",
+          "value": { "key": "kamienica", "label": "Kamienica" }
+        },
+        {
+          "key": "m",
+          "name": "Powierzchnia",
+          "type": "input",
+          "value": { "key": "34", "label": "34 m²" }
+        },
+        {
+          "key": "rooms",
+          "name": "Liczba pokoi",
+          "type": "select",
+          "value": { "key": "one", "label": "Kawalerka" }
+        },
+        {
+          "key": "rent",
+          "name": "Czynsz (dodatkowo)",
+          "type": "input",
+          "value": { "key": "621", "label": "621 zł" }
+        }
+      ],
+      "business": false,
+      "partner": null,
+      "map": { "zoom": 13, "lat": 52.40876, "lon": 16.92942, "radius": 2, "show_detailed": false },
+      "location": {
+        "city": { "id": 13983, "name": "Poznań", "normalized_name": "poznan" },
+        "district": { "id": 327, "name": "Stare Miasto" },
+        "region": { "id": 1, "name": "Wielkopolskie", "normalized_name": "wielkopolskie" }
+      },
+      "category": { "id": 15, "type": "real_estate" }
+    },
+    {
+      "id": 1109272036,
+      "url": "https://www.olx.pl/d/oferta/przytulne-4-pokoje-2-lazienki-zaraz-przy-uniwersytecie-przyrodniczym-ul-winiary-18-CID3-ID1d4oks.html",
+      "title": "Przytulne 4 pokoje| 2 łazienki| zaraz przy Uniwersytecie Przyrodniczym!| ul. Winiary 18",
+      "created_time": "2026-11-02T09:30:07+01:00",
+      "last_refresh_time": "2026-11-02T09:33:23+01:00",
+      "description": "Do wynajęcia przestronne mieszkanie 4 pokojowe przy ul. Winiary 18 w Poznaniu!<br />\n<br />\nW skład mieszkania wchodzą:<br />\n- 4 pokoje<br />\n- oddzielna kuchnia<br />\n- 2 łazienki<br />\n<br />\nCena:<br />\n- 2400 zł - czynsz najmu<br />\n- 1400 zł - czynsz administracyjny (w tym wszystkie media) <br />\n-",
+      "promotion": { "top_ad": true, "highlighted": true },
+      "params": [
+        {
+          "key": "pets",
+          "name": "Zwierzęta",
+          "type": "select",
+          "value": { "key": "Tak", "label": "Tak" }
+        },
+        {
+          "key": "winda",
+          "name": "Winda",
+          "type": "select",
+          "value": { "key": "Nie", "label": "Nie" }
+        },
+        {
+          "key": "floor_select",
+          "name": "Poziom",
+          "type": "select",
+          "value": { "key": "floor_0", "label": "Parter" }
+        },
+        {
+          "key": "furniture",
+          "name": "Umeblowane",
+          "type": "select",
+          "value": { "key": "yes", "label": "Tak" }
+        },
+        {
+          "key": "price",
+          "name": "Cena",
+          "type": "price",
+          "value": {
+            "value": 2400,
+            "type": "price",
+            "arranged": false,
+            "budget": false,
+            "currency": "PLN",
+            "negotiable": false,
+            "label": "2 400 zł"
+          }
+        },
+        {
+          "key": "builttype",
+          "name": "Rodzaj zabudowy",
+          "type": "select",
+          "value": { "key": "blok", "label": "Blok" }
+        },
+        {
+          "key": "m",
+          "name": "Powierzchnia",
+          "type": "input",
+          "value": { "key": "70", "label": "70 m²" }
+        },
+        {
+          "key": "rooms",
+          "name": "Liczba pokoi",
+          "type": "select",
+          "value": { "key": "four", "label": "4 i więcej" }
+        },
+        {
+          "key": "rent",
+          "name": "Czynsz (dodatkowo)",
+          "type": "input",
+          "value": { "key": "1400", "label": "1 400 zł" }
+        }
+      ],
+      "business": true,
+      "partner": null,
+      "map": {
+        "zoom": 13,
+        "lat": 52.40664684,
+        "lon": 16.93357039,
+        "radius": 2,
+        "show_detailed": false
+      },
+      "location": {
+        "city": { "id": 13983, "name": "Poznań", "normalized_name": "poznan" },
+        "district": { "id": 327, "name": "Stare Miasto" },
+        "region": { "id": 1, "name": "Wielkopolskie", "normalized_name": "wielkopolskie" }
+      },
+      "category": { "id": 15, "type": "real_estate" }
+    },
+    {
+      "id": 1109992408,
+      "url": "https://www.olx.pl/d/oferta/2-pokoje-centrum-poznan-stare-miasto-ul-strzalowa-3-CID3-ID1d7pJm.html",
+      "title": "2-pokoje| Centrum Poznań – Stare Miasto| ul. Strzałowa 3",
+      "created_time": "2026-11-05T00:01:57+01:00",
+      "last_refresh_time": "2026-11-05T00:01:57+01:00",
+      "description": "<p><b>Do wynajęcia komfortowe, jasne i w pełni wyposażone mieszkanie 2-pokojowe zlokalizowane w samym centrum Poznań – Stare Miasto, ul. Strzałowa 3.</b></p><p>NAJWIĘKSZE ATUTY:</p><ul><li>brak prowizji</li><li><b>centrum miasta – Stare Miasto</b></li><li>kamienica</li><li>w pełni umeblowane</li><li>dostępne od 01.12.2026 r.</li></ul>",
+      "promotion": { "top_ad": false, "highlighted": false },
+      "params": [
+        {
+          "key": "floor_select",
+          "name": "Poziom",
+          "type": "select",
+          "value": { "key": "floor_0", "label": "Parter" }
+        },
+        {
+          "key": "furniture",
+          "name": "Umeblowane",
+          "type": "select",
+          "value": { "key": "yes", "label": "Tak" }
+        },
+        {
+          "key": "price",
+          "name": "Cena",
+          "type": "price",
+          "value": {
+            "value": 2300,
+            "type": "price",
+            "arranged": false,
+            "budget": false,
+            "currency": "PLN",
+            "negotiable": false,
+            "label": "2 300 zł"
+          }
+        },
+        {
+          "key": "builttype",
+          "name": "Rodzaj zabudowy",
+          "type": "select",
+          "value": { "key": "kamienica", "label": "Kamienica" }
+        },
+        {
+          "key": "m",
+          "name": "Powierzchnia",
+          "type": "input",
+          "value": { "key": "36", "label": "36 m²" }
+        },
+        {
+          "key": "rooms",
+          "name": "Liczba pokoi",
+          "type": "select",
+          "value": { "key": "two", "label": "2 pokoje" }
+        },
+        {
+          "key": "rent",
+          "name": "Czynsz (dodatkowo)",
+          "type": "input",
+          "value": { "key": "959", "label": "959 zł" }
+        }
+      ],
+      "business": false,
+      "partner": { "code": "otodom_pl" },
+      "external_url": "https://www.otodom.pl/pl/oferta/2-pokoje-centrum-poznan-stare-miasto-ul-strzalowa-3-ID4DQGY",
+      "map": {
+        "zoom": 14,
+        "lat": 52.403516,
+        "lon": 16.9319862,
+        "radius": 0,
+        "show_detailed": true
+      },
+      "location": {
+        "city": { "id": 13983, "name": "Poznań", "normalized_name": "poznan" },
+        "district": { "id": 327, "name": "Stare Miasto" },
+        "region": { "id": 1, "name": "Wielkopolskie", "normalized_name": "wielkopolskie" }
+      },
+      "category": { "id": 15, "type": "real_estate" }
+    }
+  ],
+  "links": { "next": { "href": "https://www.olx.pl/api/v1/offers?offset=40" } }
+}

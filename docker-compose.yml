@@ -16,14 +16,17 @@ services:
       - data:/data
     read_only: true
     tmpfs:
-      - /tmp:size=16m,mode=1777
+      # HOME=/tmp: Chromium writes its profile and caches here; the root stays read-only.
+      - /tmp:size=256m,mode=1777
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges:true
-    pids_limit: 128
-    mem_limit: 256m
-    cpus: 0.5
+    # Chromium runs only during a poll (about a minute every 15); limits leave Flotana its RAM.
+    pids_limit: 512
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 1.0
     logging:
       driver: json-file
       options:

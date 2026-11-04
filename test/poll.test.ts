@@ -20,8 +20,16 @@ function harness() {
   };
   let refs: ListingRef[] = [];
   const failing = new Set<string>();
+  const opened: string[] = [];
   const source: ListingSource = {
     kind: "test",
+    handles: (url) => url.startsWith("https://www.otodom.pl/"),
+    open: async () => {
+      opened.push("open");
+    },
+    close: async () => {
+      opened.push("close");
+    },
     search: async () => refs,
     details: async (ref) => {
       if (failing.has(ref.id)) throw new Error("boom");
@@ -29,7 +37,7 @@ function harness() {
     },
   };
   const deps = {
-    source,
+    sources: [source],
     store: openStore(":memory:"),
     telegram,
     chatId: "1",
@@ -40,6 +48,7 @@ function harness() {
     sent,
     deps,
     failing,
+    opened,
     setRefs: (ids: string[]) => {
       refs = ids.map(ref);
     },
@@ -75,6 +84,12 @@ describe("pollOnce", () => {
     await pollOnce([SEARCH], h.deps);
     assert.equal(h.sent.length, 1);
   });
+
+  it("opens a source once per pass, closes it, and skips searches it does not handle", async () => {
+    const h = harness();
+    await pollOnce([SEARCH, `${SEARCH}?page=2`, "https://www.olx.pl/nieruchomosci/"], h.deps);
+    assert.deepEqual(h.opened, ["open", "close"]);
+  });
 });
 
 describe("format", () => {
@@ -88,16 +103,29 @@ describe("format", () => {
 });
 
 describe("config", () => {
-  it("rejects placeholders and URLs of another site", () => {
+  const base = { TELEGRAM_BOT_TOKEN: "t", TELEGRAM_CHAT_ID: "1" };
+
+  it("rejects placeholders, foreign sites and runners without a matching search", () => {
     assert.throws(
       () =>
         loadConfig({
+          ...base,
           TELEGRAM_BOT_TOKEN: "CHANGE_ME",
-          TELEGRAM_CHAT_ID: "1",
-          SOURCE: "otodom",
-          SEARCH_URLS: "https://www.olx.pl/nieruchomosci/",
+          SOURCES: "otodom",
+          SEARCH_URLS: "https://www.olx.pl/nieruchomosci/|https://example.com/",
         }),
-      /TELEGRAM_BOT_TOKEN is required[\s\S]*not a www\.otodom\.pl URL/,
+      /TELEGRAM_BOT_TOKEN is required[\s\S]*example\.com\/ is neither[\s\S]*no search for SOURCES=otodom/,
     );
+  });
+
+  it("defaults to the OLX runner polling every 15 minutes", () => {
+    const config = loadConfig({
+      ...base,
+      SEARCH_URLS: `https://www.olx.pl/nieruchomosci/mieszkania/wynajem/poznan/ | ${SEARCH}`,
+    });
+    assert.deepEqual(config.sources, ["olx"]);
+    assert.equal(config.pollIntervalMinutes, 15);
+    assert.equal(config.skipOtodomCopies, false);
+    assert.equal(config.searchUrls.length, 2);
   });
 });

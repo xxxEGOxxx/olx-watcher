@@ -56,7 +56,8 @@ describe("description costs", () => {
   it("recognizes no-commission offers and included utilities", () => {
     const costs = extractDescriptionCosts("Bez prowizji! Media wliczone 300 zł w cenę.");
     assert.deepEqual(costs.agencyFee, { kind: "none" });
-    assert.equal(costs.utilities, null);
+    assert.equal(costs.utilities, 0);
+    assert.equal(extractDescriptionCosts("Czynsz 2000 zł").utilities, null);
   });
 
   it("reads a fixed commission", () => {

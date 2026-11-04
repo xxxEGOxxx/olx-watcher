@@ -1,16 +1,26 @@
-export type SourceKind = "none" | "otodom";
+import { isOlxUrl } from "./sources/olx.ts";
+import { isOtodomUrl } from "./sources/otodom.ts";
+
+export type SourceKind = "olx" | "otodom";
 
 export type Config = {
   telegramBotToken: string;
   telegramChatId: string;
+  /** Every search of every runner; each runner polls only those of its `sources`. */
   searchUrls: string[];
-  source: SourceKind;
+  /** Sites this runner polls. The server runs `olx`; otodom blocks datacenter IPs. */
+  sources: SourceKind[];
+  /** Drop OLX copies of otodom ads (set where an otodom runner also reports them). */
+  skipOtodomCopies: boolean;
   pollIntervalMinutes: number;
   dataDir: string;
 };
 
-const SOURCES: readonly SourceKind[] = ["none", "otodom"];
-const SOURCE_HOSTS: Record<SourceKind, string | null> = { none: null, otodom: "www.otodom.pl" };
+const KNOWN: Record<SourceKind, (url: string) => boolean> = { olx: isOlxUrl, otodom: isOtodomUrl };
+
+export function sourceOfUrl(url: string): SourceKind | null {
+  return (Object.keys(KNOWN) as SourceKind[]).find((kind) => KNOWN[kind](url)) ?? null;
+}
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const errors: string[] = [];
@@ -27,17 +37,24 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     .map((url) => url.trim())
     .filter(Boolean);
   if (searchUrls.length === 0) errors.push("SEARCH_URLS needs at least one URL");
-
-  const source = (env.SOURCE ?? "none") as SourceKind;
-  if (!SOURCES.includes(source)) errors.push(`SOURCE must be one of: ${SOURCES.join(", ")}`);
-  const host = SOURCE_HOSTS[source];
-  for (const url of host ? searchUrls : []) {
-    if (!URL.canParse(url) || new URL(url).hostname !== host) {
-      errors.push(`SEARCH_URLS: ${url} is not a ${host} URL (SOURCE=${source})`);
-    }
+  for (const url of searchUrls) {
+    if (!sourceOfUrl(url))
+      errors.push(`SEARCH_URLS: ${url} is neither www.olx.pl nor www.otodom.pl`);
   }
 
-  const pollIntervalMinutes = Number(env.POLL_INTERVAL_MINUTES ?? "10");
+  const sources = (env.SOURCES ?? "olx")
+    .split(",")
+    .map((kind) => kind.trim())
+    .filter(Boolean) as SourceKind[];
+  for (const kind of sources) {
+    if (!(kind in KNOWN)) errors.push(`SOURCES: unknown source ${kind} (known: olx, otodom)`);
+  }
+  if (sources.length === 0) errors.push("SOURCES needs at least one of: olx, otodom");
+  else if (!searchUrls.some((url) => sources.some((kind) => sourceOfUrl(url) === kind))) {
+    errors.push(`SEARCH_URLS has no search for SOURCES=${sources.join(",")}`);
+  }
+
+  const pollIntervalMinutes = Number(env.POLL_INTERVAL_MINUTES ?? "15");
   if (!Number.isFinite(pollIntervalMinutes) || pollIntervalMinutes < 5) {
     errors.push("POLL_INTERVAL_MINUTES must be a number >= 5");
   }
@@ -47,7 +64,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     telegramBotToken,
     telegramChatId,
     searchUrls,
-    source,
+    sources,
+    skipOtodomCopies: ["1", "true", "yes"].includes((env.SKIP_OTODOM_COPIES ?? "").toLowerCase()),
     pollIntervalMinutes,
     dataDir: env.DATA_DIR ?? "./data",
   };

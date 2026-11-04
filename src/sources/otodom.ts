@@ -106,6 +106,7 @@ export function parseAd(html: string): Listing {
 export function createOtodomSource(fetchHtml: FetchHtml): ListingSource {
   return {
     kind: "otodom",
+    handles: isOtodomUrl,
     search: async (searchUrl) => parseSearch(await fetchHtml(normalizeSearchUrl(searchUrl))),
     details: async (ref) => parseAd(await fetchHtml(ref.url)),
   };
